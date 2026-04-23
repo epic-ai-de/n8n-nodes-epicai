@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-epicai",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "N8N Community Node für Epic AI API",
   "keywords": [
     "n8n-community-node-package",
