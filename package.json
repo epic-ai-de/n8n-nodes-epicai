@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-epicai",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "N8N Community Node for the Epic AI (ChatCaptain) API",
   "keywords": [
     "n8n-community-node-package",
@@ -9,9 +9,10 @@
     "chatbot"
   ],
   "license": "MIT",
-  "homepage": "https://epicai.de",
+  "homepage": "https://epic-ai.de",
   "author": {
-    "name": "Epic AI"
+    "name": "Epic AI",
+    "email": "support@epic-ai.com"
   },
   "repository": {
     "type": "git",
