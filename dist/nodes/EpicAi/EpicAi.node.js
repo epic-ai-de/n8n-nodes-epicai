@@ -361,8 +361,6 @@ class EpicAi {
     async execute() {
         const items = this.getInputData();
         const returnData = [];
-        const credentials = await this.getCredentials('epicAiApi');
-        const apiKey = credentials.apiKey;
         const baseUrl = 'https://api.chatcaptain.com';
         for (let i = 0; i < items.length; i++) {
             const resource = this.getNodeParameter('resource', i);
@@ -515,7 +513,6 @@ class EpicAi {
                 url: `${baseUrl}${url}`,
                 headers: {
                     'Content-Type': 'application/json',
-                    'x-chatcaptain-key': apiKey,
                 },
                 returnFullResponse: false,
                 ignoreHttpStatusErrors: true,
@@ -525,7 +522,7 @@ class EpicAi {
             }
             let result = {};
             try {
-                const response = await this.helpers.httpRequest(options);
+                const response = await this.helpers.httpRequestWithAuthentication.call(this, 'epicAiApi', options);
                 if (response === null || response === undefined) {
                     result = { success: true };
                 }

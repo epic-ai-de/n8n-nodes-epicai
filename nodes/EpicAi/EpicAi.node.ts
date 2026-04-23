@@ -381,8 +381,6 @@ export class EpicAi implements INodeType {
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 		const items = this.getInputData();
 		const returnData: INodeExecutionData[] = [];
-		const credentials = await this.getCredentials('epicAiApi');
-		const apiKey = credentials.apiKey as string;
 		const baseUrl = 'https://api.chatcaptain.com';
 
 		for (let i = 0; i < items.length; i++) {
@@ -542,7 +540,6 @@ export class EpicAi implements INodeType {
 				url: `${baseUrl}${url}`,
 				headers: {
 					'Content-Type': 'application/json',
-					'x-chatcaptain-key': apiKey,
 				},
 				returnFullResponse: false,
 				ignoreHttpStatusErrors: true,
@@ -554,7 +551,7 @@ export class EpicAi implements INodeType {
 
 			let result = {};
 			try {
-				const response = await this.helpers.httpRequest(options);
+				const response = await this.helpers.httpRequestWithAuthentication.call(this, 'epicAiApi', options);
 				if (response === null || response === undefined) {
 					result = { success: true };
 				} else if (typeof response === 'string') {

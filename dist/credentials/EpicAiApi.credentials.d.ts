@@ -8,7 +8,7 @@ export declare class EpicAiApi implements ICredentialType {
         type: "generic";
         properties: {
             headers: {
-                authorization: string;
+                'x-chatcaptain-key': string;
             };
         };
     };

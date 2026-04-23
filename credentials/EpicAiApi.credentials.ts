@@ -12,7 +12,7 @@ export class EpicAiApi implements ICredentialType {
 			typeOptions: { password: true },
 			default: '',
 			required: true,
-			description: 'Der ChatCaptain API Key',
+			description: 'The ChatCaptain API key',
 		},
 	];
 
@@ -20,7 +20,7 @@ export class EpicAiApi implements ICredentialType {
 		type: 'generic' as const,
 		properties: {
 			headers: {
-				authorization: '={{$credentials.apiKey}}',
+				'x-chatcaptain-key': '={{$credentials.apiKey}}',
 			},
 		},
 	};

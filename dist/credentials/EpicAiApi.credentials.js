@@ -14,14 +14,14 @@ class EpicAiApi {
                 typeOptions: { password: true },
                 default: '',
                 required: true,
-                description: 'Der ChatCaptain API Key',
+                description: 'The ChatCaptain API key',
             },
         ];
         this.authenticate = {
             type: 'generic',
             properties: {
                 headers: {
-                    authorization: '={{$credentials.apiKey}}',
+                    'x-chatcaptain-key': '={{$credentials.apiKey}}',
                 },
             },
         };
