@@ -85,7 +85,7 @@ const CONVERSATION_CONTACT_UPDATE_DEFAULT = JSON.stringify({
             customer_id: "12345"
         },
         organizationIds: [
-            "uq8BxZaJd2wZR9cxd1P"
+            "org_abc123xyz"
         ],
         avatar: "https://example.com/avatar.png",
         language: "EN"
