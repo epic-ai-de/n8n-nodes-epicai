@@ -394,7 +394,6 @@ export class EpicAi implements INodeType {
 			let method: IHttpRequestOptions['method'] = 'GET';
 			let body: object | undefined = undefined;
 
-			// Body holen
 			const bodyParamMap: Record<string, string> = {
 				createConversation: 'bodyConversationCreate',
 				updateConversation: 'bodyConversationUpdate',

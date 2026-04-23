@@ -371,7 +371,6 @@ class EpicAi {
             let url = '';
             let method = 'GET';
             let body = undefined;
-            // Body holen
             const bodyParamMap = {
                 createConversation: 'bodyConversationCreate',
                 updateConversation: 'bodyConversationUpdate',
