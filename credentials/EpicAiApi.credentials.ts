@@ -1,4 +1,9 @@
-import type { ICredentialType, INodeProperties } from 'n8n-workflow';
+import type {
+	IAuthenticateGeneric,
+	ICredentialTestRequest,
+	ICredentialType,
+	INodeProperties,
+} from 'n8n-workflow';
 
 export class EpicAiApi implements ICredentialType {
 	name = 'epicAiApi';
@@ -16,8 +21,8 @@ export class EpicAiApi implements ICredentialType {
 		},
 	];
 
-	authenticate = {
-		type: 'generic' as const,
+	authenticate: IAuthenticateGeneric = {
+		type: 'generic',
 		properties: {
 			headers: {
 				'x-chatcaptain-key': '={{$credentials.apiKey}}',
@@ -25,11 +30,11 @@ export class EpicAiApi implements ICredentialType {
 		},
 	};
 
-	test = {
+	test: ICredentialTestRequest = {
 		request: {
 			baseURL: 'https://api.chatcaptain.com',
 			url: '/v1/public-apps',
-			method: 'GET' as const,
+			method: 'GET',
 		},
 	};
 }
