@@ -1,0 +1,55 @@
+{
+  "name": "n8n-nodes-epicai",
+  "version": "1.0.0",
+  "description": "N8N Community Node für Epic AI API",
+  "keywords": [
+    "n8n-community-node-package",
+    "epicai",
+    "chatcaptain",
+    "chatbot"
+  ],
+  "license": "MIT",
+  "homepage": "https://epicai.de",
+  "author": {
+    "name": "Epic AI"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/epicai/n8n-nodes-epicai"
+  },
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "format": "prettier nodes credentials --write",
+    "lint": "eslint nodes credentials package.json",
+    "lintfix": "eslint nodes credentials package.json --fix",
+    "prepublishOnly": "npm run build && npm run lint -c .eslintrc.prepublish.js nodes credentials package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "credentials": [
+      "dist/credentials/EpicAiApi.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/EpicAi/EpicAi.node.js"
+    ]
+  },
+  "devDependencies": {
+    "@types/node": "^18.16.16",
+    "@typescript-eslint/eslint-plugin": "^8.58.2",
+    "@typescript-eslint/parser": "^8.58.2",
+    "eslint": "^9.39.4",
+    "eslint-plugin-n8n-nodes-base": "^1.16.6",
+    "gulp": "^5.0.1",
+    "jsonc-eslint-parser": "^2.4.2",
+    "n8n-workflow": "*",
+    "typescript": "^5.1.3"
+  },
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  }
+}
