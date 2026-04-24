@@ -4,7 +4,9 @@ import type {
 	INodeType,
 	INodeTypeDescription,
 	IHttpRequestOptions,
+	JsonObject,
 } from 'n8n-workflow';
+import { NodeApiError } from 'n8n-workflow';
 
 const CONVERSATION_CREATE_DEFAULT = JSON.stringify({
 	conversation: {
@@ -561,10 +563,10 @@ export class EpicAi implements INodeType {
 				}
 			} catch (error: unknown) {
 				const err = error as Error;
-				if (err.message && (err.message.includes('circular') || err.message.includes('500') || err.message.includes('Converting'))) {
+				if (err.message && (err.message.includes('circular') || err.message.includes('Converting'))) {
 					result = { success: true };
 				} else {
-					throw error;
+					throw new NodeApiError(this.getNode(), error as JsonObject);
 				}
 			}
 			returnData.push({ json: result });

@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EpicAi = void 0;
+const n8n_workflow_1 = require("n8n-workflow");
 const CONVERSATION_CREATE_DEFAULT = JSON.stringify({
     conversation: {
         contactId: "contact_abc123",
@@ -535,11 +536,11 @@ class EpicAi {
             }
             catch (error) {
                 const err = error;
-                if (err.message && (err.message.includes('circular') || err.message.includes('500') || err.message.includes('Converting'))) {
+                if (err.message && (err.message.includes('circular') || err.message.includes('Converting'))) {
                     result = { success: true };
                 }
                 else {
-                    throw error;
+                    throw new n8n_workflow_1.NodeApiError(this.getNode(), error);
                 }
             }
             returnData.push({ json: result });
