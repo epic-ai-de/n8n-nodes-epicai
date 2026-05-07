@@ -123,6 +123,7 @@ class EpicAi {
                     options: [
                         { name: 'Contact', value: 'contact' },
                         { name: 'Conversation', value: 'conversation' },
+                        { name: 'Statistic', value: 'statistics' },
                         { name: 'Variable', value: 'variable' },
                     ],
                     default: 'conversation',
@@ -178,6 +179,18 @@ class EpicAi {
                         { name: 'Delete Global Variable', value: 'deleteVariable', action: 'Delete a global variable' },
                     ],
                     default: 'createVariable',
+                },
+                {
+                    displayName: 'Operation',
+                    name: 'operation',
+                    type: 'options',
+                    noDataExpression: true,
+                    displayOptions: { show: { resource: ['statistics'] } },
+                    options: [
+                        { name: 'Create Export', value: 'createExport', action: 'Create a statistics export' },
+                        { name: 'Get Export', value: 'getExport', action: 'Get the status of a statistics export' },
+                    ],
+                    default: 'createExport',
                 },
                 // ─── SHARED PARAMETERS ───────────────────────────────────────
                 {
@@ -239,11 +252,63 @@ class EpicAi {
                     default: '',
                     displayOptions: {
                         show: {
-                            resource: ['contact'],
-                            operation: ['getContact', 'updateContact', 'deleteContact'],
+                            resource: ['contact', 'conversation'],
+                            operation: ['getContact', 'updateContact', 'deleteContact', 'getAllConversations'],
                         },
                     },
                     description: 'The ID of the contact',
+                },
+                {
+                    displayName: 'Channel ID',
+                    name: 'channelId',
+                    type: 'string',
+                    default: '',
+                    displayOptions: {
+                        show: {
+                            resource: ['conversation'],
+                            operation: ['getAllConversations'],
+                        },
+                    },
+                    description: 'Filters by a channel ID',
+                },
+                {
+                    displayName: 'Export ID',
+                    name: 'exportId',
+                    type: 'string',
+                    default: '',
+                    displayOptions: {
+                        show: {
+                            resource: ['statistics'],
+                            operation: ['getExport'],
+                        },
+                    },
+                    description: 'The ID of the export job',
+                },
+                {
+                    displayName: 'From',
+                    name: 'from',
+                    type: 'string',
+                    default: '2025-01-01T00:00:00.000Z',
+                    displayOptions: {
+                        show: {
+                            resource: ['statistics'],
+                            operation: ['createExport'],
+                        },
+                    },
+                    description: 'The start date of the statistics timeframe (ISO format)',
+                },
+                {
+                    displayName: 'To',
+                    name: 'to',
+                    type: 'string',
+                    default: '2025-01-31T23:59:59.999Z',
+                    displayOptions: {
+                        show: {
+                            resource: ['statistics'],
+                            operation: ['createExport'],
+                        },
+                    },
+                    description: 'The end date of the statistics timeframe (ISO format)',
                 },
                 // ─── BODY FIELDS ─────────────────────────────────────────────
                 {
@@ -370,6 +435,7 @@ class EpicAi {
             let url = '';
             let method = 'GET';
             let body = undefined;
+            const qs = {};
             const bodyParamMap = {
                 createConversation: 'bodyConversationCreate',
                 updateConversation: 'bodyConversationUpdate',
@@ -397,6 +463,12 @@ class EpicAi {
                 if (operation === 'getAllConversations') {
                     url = `/v1/chatbots/${chatbotId}/conversations`;
                     method = 'GET';
+                    const filterContactId = this.getNodeParameter('contactId', i, '');
+                    const filterChannelId = this.getNodeParameter('channelId', i, '');
+                    if (filterContactId)
+                        qs.contactId = filterContactId;
+                    if (filterChannelId)
+                        qs.channelId = filterChannelId;
                 }
                 if (operation === 'getConversation') {
                     const conversationId = this.getNodeParameter('conversationId', i);
@@ -508,6 +580,24 @@ class EpicAi {
                     method = 'DELETE';
                 }
             }
+            // ─── STATISTICS ─────────────────────────────────────────────
+            if (resource === 'statistics') {
+                if (operation === 'createExport') {
+                    url = `/v1/chatbots/${chatbotId}/statistics/export`;
+                    method = 'POST';
+                    const from = this.getNodeParameter('from', i, '');
+                    const to = this.getNodeParameter('to', i, '');
+                    if (from)
+                        qs.from = from;
+                    if (to)
+                        qs.to = to;
+                }
+                if (operation === 'getExport') {
+                    const exportId = this.getNodeParameter('exportId', i);
+                    url = `/v1/chatbots/${chatbotId}/statistics/export/${exportId}`;
+                    method = 'GET';
+                }
+            }
             // ─── HTTP REQUEST ────────────────────────────────────────────
             const options = {
                 method,
@@ -515,6 +605,7 @@ class EpicAi {
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                qs,
                 returnFullResponse: false,
                 ignoreHttpStatusErrors: true,
             };

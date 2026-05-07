@@ -1,6 +1,6 @@
 # n8n-nodes-epicai
 
-This node lets you interact with the [Epic AI](https://www.epic-ai.com) API. Epic AI is a platform for building individually configurable flow- and AI-driven chat, voice, and email bots. It allows you to manage contacts, conversations, messages, notes, and variables directly from your n8n workflows.
+This node lets you interact with the [Epic AI](https://www.epic-ai.com) API. Epic AI is a platform for building individually configurable flow- and AI-driven chat, voice, and email bots. It allows you to manage contacts, conversations, messages, notes, variables, and statistics directly from your n8n workflows.
 
 ## Installation
 
@@ -37,7 +37,7 @@ You can find your API key in the ChatCaptain dashboard under **Settings → API*
 | Create Conversation | Create a new conversation |
 | Create Note | Add a note to a conversation |
 | Delete Note | Remove a note from a conversation |
-| Get All Conversations | Retrieve all conversations |
+| Get All Conversations | Retrieve all conversations — optionally filter by `contactId` or `channelId` |
 | Get All Messages | Retrieve all messages of a conversation |
 | Get All Variables | Retrieve all variables of a conversation |
 | Get Conversation | Retrieve a single conversation |
@@ -54,6 +54,12 @@ You can find your API key in the ChatCaptain dashboard under **Settings → API*
 |---|---|
 | Create Global Variable | Create a new global chatbot variable |
 | Delete Global Variable | Delete a global chatbot variable |
+
+### Statistic
+| Operation | Description |
+|---|---|
+| Create Export | Start a statistics export for a given time range — returns an `exportId` |
+| Get Export | Retrieve the status and download link of a statistics export |
 
 ## Examples
 
@@ -151,6 +157,46 @@ Configure the node as follows:
   "id": "var_def456",
   "name": "loyalty_tier",
   "value": "Gold"
+}
+```
+
+---
+
+### Statistic: Export and Download Statistics
+
+**Use case:** At the end of each month your operations team needs a CSV report of all chatbot statistics. An n8n workflow triggers on a schedule, starts the export, polls until it completes, and then passes the download link to a follow-up step (e.g. send via email or save to Google Drive).
+
+**Step 1 — Create Export:**
+
+| Field | Value |
+|---|---|
+| Resource | Statistic |
+| Operation | Create Export |
+| Chatbot ID | `abc123` |
+| From | `2025-01-01T00:00:00.000Z` |
+| To | `2025-01-31T23:59:59.999Z` |
+
+**Expected result:**
+```json
+{
+  "exportId": "0512277ec44ddfa169ea2a7f645b5be5..."
+}
+```
+
+**Step 2 — Get Export (poll until `status` is `completed`):**
+
+| Field | Value |
+|---|---|
+| Resource | Statistic |
+| Operation | Get Export |
+| Chatbot ID | `abc123` |
+| Export ID | `0512277ec44ddfa169ea2a7f645b5be5...` |
+
+**Expected result:**
+```json
+{
+  "status": "completed",
+  "downloadLink": "https://storage.googleapis.com/..."
 }
 ```
 
