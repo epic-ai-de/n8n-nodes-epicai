@@ -49,11 +49,10 @@ const CONVERSATION_SEND_MESSAGE_AS_AGENT_DEFAULT = JSON.stringify({
 
 const CONVERSATION_VARIABLE_CREATE_DEFAULT = JSON.stringify({
 	category: "custom",
-	defaultValue: "Default Value",
 	label: "Customer Email",
 	type: "string",
 	name: "customer_email",
-	structureJson: "{\"firstName\": \"string\", \"lastName\": \"string\"}"
+	"subCategory": 0
 }, null, 2);
 
 const CONVERSATION_VARIABLE_UPDATE_DEFAULT = JSON.stringify({
@@ -86,6 +85,10 @@ const CONVERSATION_CONTACT_CREATE_DEFAULT = JSON.stringify({
 	telegramId: "123456789",
 	providerId: "provider_abc123",
 	avatar: "https://example.com/avatar.png"
+}, null, 2);
+
+const CONTACT_VARIABLE_UPDATE_DEFAULT = JSON.stringify({
+	value: ""
 }, null, 2);
 
 const CONVERSATION_CONTACT_UPDATE_DEFAULT = JSON.stringify({
@@ -182,7 +185,10 @@ export class EpicAi implements INodeType {
 					{ name: 'Create Contact', value: 'createContact', action: 'Create a contact' },
 					{ name: 'Delete Contact', value: 'deleteContact', action: 'Delete a contact' },
 					{ name: 'Get All Contacts', value: 'getAllContacts', action: 'Get all contacts' },
+					{ name: 'Get All Variables', value: 'getAllContactVariables', action: 'Get all variables of a contact' },
 					{ name: 'Get Contact', value: 'getContact', action: 'Get a contact' },
+					{ name: 'Get Variable', value: 'getContactVariable', action: 'Get a specific variable of a contact' },
+					{ name: 'Set / Update Variable', value: 'updateContactVariable', action: 'Set or update a variable of a contact' },
 					{ name: 'Update Contact', value: 'updateContact', action: 'Update a contact' },
 				],
 				default: 'getAllContacts',
@@ -259,8 +265,8 @@ export class EpicAi implements INodeType {
 				default: '',
 				displayOptions: {
 					show: {
-						resource: ['conversation', 'variable'],
-						operation: ['getVariable', 'updateVariable', 'deleteVariable'],
+						resource: ['conversation', 'variable', 'contact'],
+						operation: ['getVariable', 'updateVariable', 'deleteVariable', 'getContactVariable', 'updateContactVariable'],
 					},
 				},
 				description: 'The ID of the variable',
@@ -273,7 +279,7 @@ export class EpicAi implements INodeType {
 				displayOptions: {
 					show: {
 						resource: ['contact', 'conversation'],
-						operation: ['getContact', 'updateContact', 'deleteContact', 'getAllConversations'],
+						operation: ['getContact', 'updateContact', 'deleteContact', 'getAllConversations', 'getAllContactVariables', 'getContactVariable', 'updateContactVariable'],
 					},
 				},
 				description: 'The ID of the contact',
@@ -442,6 +448,16 @@ export class EpicAi implements INodeType {
 				},
 				description: 'The request body as JSON',
 			},
+			{
+				displayName: 'Body (JSON)',
+				name: 'bodyContactVariableUpdate',
+				type: 'json',
+				default: CONTACT_VARIABLE_UPDATE_DEFAULT,
+				displayOptions: {
+					show: { resource: ['contact'], operation: ['updateContactVariable'] },
+				},
+				description: 'The request body as JSON',
+			},
 		],
 	};
 
@@ -472,6 +488,7 @@ export class EpicAi implements INodeType {
 				removeNote: 'bodyNoteRemove',
 				createContact: 'bodyContactCreate',
 				updateContact: 'bodyContactUpdate',
+				updateContactVariable: 'bodyContactVariableUpdate',
 			};
 			const bodyParamName = bodyParamMap[operation];
 			if (bodyParamName) {
@@ -589,6 +606,24 @@ export class EpicAi implements INodeType {
 					const contactId = this.getNodeParameter('contactId', i) as string;
 					url = `/v1/chatbots/${chatbotId}/contacts/${contactId}`;
 					method = 'DELETE';
+				}
+				if (operation === 'getAllContactVariables') {
+					const contactId = this.getNodeParameter('contactId', i) as string;
+					url = `/v1/chatbots/${chatbotId}/contacts/variables/${contactId}`;
+					method = 'GET';
+				}
+				if (operation === 'getContactVariable') {
+					const contactId = this.getNodeParameter('contactId', i) as string;
+					const variableId = this.getNodeParameter('variableId', i) as string;
+					url = `/v1/chatbots/${chatbotId}/contacts/variables/${contactId}/${variableId}`;
+					method = 'GET';
+				}
+				if (operation === 'updateContactVariable') {
+					const contactId = this.getNodeParameter('contactId', i) as string;
+					const variableId = this.getNodeParameter('variableId', i) as string;
+					body = { contactId, ...(body ?? {}) };
+					url = `/v1/chatbots/${chatbotId}/contacts/variables/${variableId}`;
+					method = 'PUT';
 				}
 			}
 
