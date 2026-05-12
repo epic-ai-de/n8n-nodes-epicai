@@ -18,6 +18,7 @@ n8n-nodes-epicai
 
 You can find your API key in the ChatCaptain dashboard under **Settings → API**.
 
+
 > **Note:** The Body (JSON) fields in this node show only the required parameters for each operation. Additional optional parameters are available — see the [API documentation](https://api.chatcaptain.com/api) for the full reference.
 
 ## Resources & Operations
@@ -28,7 +29,10 @@ You can find your API key in the ChatCaptain dashboard under **Settings → API*
 | Create Contact | Create a new contact |
 | Delete Contact | Delete a contact |
 | Get All Contacts | Retrieve all contacts |
+| Get All Variables | Retrieve all variables of a contact |
 | Get Contact | Retrieve a single contact |
+| Get Variable | Retrieve a specific variable of a contact |
+| Set / Update Variable | Set or update a variable of a contact |
 | Update Contact | Update a contact |
 
 ### Conversation
@@ -142,6 +146,38 @@ Configure the node as follows:
 | Operation | Set / Update Variable |
 | Chatbot ID | `abc123` |
 | Conversation ID | `conv_xyz789` |
+| Variable ID | `var_def456` |
+
+**Body (JSON):**
+```json
+{
+  "value": "Gold"
+}
+```
+
+**Expected result:**
+```json
+{
+  "id": "var_def456",
+  "name": "loyalty_tier",
+  "value": "Gold"
+}
+```
+
+---
+
+### Contact: Set / Update a Contact Variable
+
+**Use case:** A customer completes a purchase in your online shop. An n8n workflow picks up the order event and updates a contact variable in ChatCaptain — for example the customer's loyalty tier — so the chatbot can immediately reference the updated value in future conversations without the customer having to re-confirm their status.
+
+Configure the node as follows:
+
+| Field | Value |
+|---|---|
+| Resource | Contact |
+| Operation | Set / Update Variable |
+| Chatbot ID | `abc123` |
+| Contact ID | `contact_xyz789` |
 | Variable ID | `var_def456` |
 
 **Body (JSON):**
